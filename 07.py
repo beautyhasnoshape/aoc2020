@@ -1,16 +1,25 @@
+import re
+
 with open("07.txt") as f:
     lines = [a.replace('\n', '') for a in f.readlines()]
 
-bags = {}
-for line in lines:
-    e = line.split(' ')
-    bag = e[0] + ' ' + e[1]
-    if bag not in bags:
-        bags[bag] = []
-    if e[4] != 'no':
-        for i in range((len(e)-4) // 4):
-            a, b = e[4+i*4+0], e[4+i*4+1] + ' ' + e[4+i*4+2]
-            bags[bag].append((b, a))
+bags = {
+    bag: [(b, int(a)) for a, b in re.findall(r"([0-9]+) ([a-z]+ [a-z]+) bag[s]?[\,\.]", bags)]
+    for (bag, bags) in [txt.split(' bags contain ') for txt in lines]
+}
+
+# non-regex version:
+#
+# bags = {}
+# for line in lines:
+#     e = line.split(' ')
+#     bag = e[0] + ' ' + e[1]
+#     if bag not in bags:
+#         bags[bag] = []
+#     if e[4] != 'no':
+#         for i in range((len(e)-4) // 4):
+#             a, b = e[4+i*4+0], e[4+i*4+1] + ' ' + e[4+i*4+2]
+#             bags[bag].append((b, a))
 
 
 def traverse(bag: str, top_bag: str, result: set):
@@ -46,4 +55,3 @@ traverse2('shiny gold', result, 1)
 print(sum(result))
 
 assert 13264 == sum(result)
-
